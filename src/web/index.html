@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Daily Operations Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 1000px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    article {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin: 12px 0;
+      padding: 14px;
+    }
+
+    button {
+      cursor: pointer;
+      margin: 4px;
+      padding: 8px 12px;
+    }
+
+    small {
+      color: #666;
+    }
+
+    pre {
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daily Operations Assistant</h1>
+
+  <button onclick="loadMessages()">Load Gmail</button>
+  <button onclick="loadTasks()">Load Tasks</button>
+
+  <main id="output"></main>
+
+  <script>
+    const output = document.getElementById("output");
+
+    function text(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function fail(error) {
+      output.innerHTML =
+        `<p style="color:#a00">${text(error)}</p>`;
+    }
+
+    async function loadMessages() {
+      output.innerHTML = "<p>Loading Gmail...</p>";
+
+      try {
+        const response = await fetch("/api/messages");
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        const messages = await response.json();
+
+        output.innerHTML = messages.map(message => `
+          <article>
+            <h3>${text(message.subject || "(no subject)")}</h3>
+            <small>${text(message.sender)}</small>
+            <p>${text(message.content.slice(0, 700))}</p>
+            <button onclick="processMessage('${message.item_id}')">
+              Process
+            </button>
+            <span id="result-${message.item_id}"></span>
+          </article>
+        `).join("");
+      } catch (error) {
+        fail(error);
+      }
+    }
+
+    async function processMessage(itemId) {
+      const target = document.getElementById(`result-${itemId}`);
+      target.textContent = " Processing...";
+
+      try {
+        const response = await fetch(
+          `/api/process/${encodeURIComponent(itemId)}`,
+          { method: "POST" }
+        );
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        const result = await response.json();
+        const state = result.state;
+
+        target.innerHTML = `
+          <pre>
+Classification: ${text(
+            state.classification?.classification
+          )}
+Route: ${text(state.route)}
+Extraction: ${text(
+            state.extraction?.status || "not run"
+          )}
+Tasks: ${result.tasks.length}
+${state.clarification_question
+  ? "Question: " + text(state.clarification_question)
+  : ""}
+${result.task_errors.length
+  ? "Task errors: " + text(result.task_errors.join("; "))
+  : ""}
+          </pre>
+        `;
+      } catch (error) {
+        target.innerHTML = `<p style="color:#a00">${text(error)}</p>`;
+      }
+    }
+
+    async function loadTasks() {
+      output.innerHTML = "<p>Loading tasks...</p>";
+
+      try {
+        const response = await fetch("/api/tasks");
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        const tasks = await response.json();
+
+        output.innerHTML = tasks.length
+          ? tasks.map(task => `
+              <article>
+                <h3>${text(task.title)}</h3>
+                <p>
+                  Priority: ${text(task.priority)}
+                  <br>
+                  Deadline: ${text(task.deadline || "none")}
+                  <br>
+                  Effort: ${text(task.estimated_effort)}
+                </p>
+                <p>${text(task.completion_criteria)}</p>
+                <small>${text(task.evidence)}</small>
+              </article>
+            `).join("")
+          : "<p>No tasks have been processed.</p>";
+      } catch (error) {
+        fail(error);
+      }
+    }
+  </script>
+</body>
+</html>
