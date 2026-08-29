@@ -1,0 +1,228 @@
+[
+  {
+    "name": "explicit request with deadline",
+    "message": {
+      "item_id": "email-001",
+      "source": "email",
+      "content": "Hi, can you review the proposal and send me your comments by August 21, 2026?"
+    },
+    "expected_classification": "action_required",
+    "expected_status": "commitments_found",
+    "expected_count": 1,
+    "expected_deadlines": ["2026-08-21"],
+    "expected_deadline_phrases": ["August 21, 2026"],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "FYI with no user action",
+    "message": {
+      "item_id": "email-002",
+      "source": "email",
+      "content": "FYI: The product team has moved the release date to September 3, 2026."
+    },
+    "expected_classification": "information_only",
+    "expected_status": "none_found",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "explicit request without deadline",
+    "message": {
+      "item_id": "email-003",
+      "source": "email",
+      "content": "Could you look over the draft contract and let me know whether the payment terms seem reasonable?"
+    },
+    "expected_classification": "action_required",
+    "expected_status": "commitments_found",
+    "expected_count": 1,
+    "expected_deadlines": [null],
+    "expected_deadline_phrases": [null],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "work assigned to named people with unknown user identity",
+    "message": {
+      "item_id": "email-004",
+      "source": "email",
+      "content": "Alex, please send the updated budget to the finance team by August 22, 2026. Jordan, can you confirm once it has been sent?"
+    },
+    "expected_classification": "needs_clarification",
+    "expected_status": "needs_clarification",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": true
+  },
+  {
+    "name": "two explicit user commitments",
+    "message": {
+      "item_id": "email-005",
+      "source": "email",
+      "content": "Could you review the customer feedback by August 22, 2026, and send the revised onboarding checklist by August 25, 2026?"
+    },
+    "expected_classification": "action_required",
+    "expected_status": "commitments_found",
+    "expected_count": 2,
+    "expected_deadlines": ["2026-08-22", "2026-08-25"],
+    "expected_deadline_phrases": ["August 22, 2026", "August 25, 2026"],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "explicit promise by the user",
+    "message": {
+      "item_id": "email-006",
+      "source": "email",
+      "content": "I will send the final budget to Priya by August 28, 2026."
+    },
+    "expected_classification": "action_required",
+    "expected_status": "commitments_found",
+    "expected_count": 1,
+    "expected_deadlines": ["2026-08-28"],
+    "expected_deadline_phrases": ["August 28, 2026"],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "suggestion without commitment",
+    "message": {
+      "item_id": "email-007",
+      "source": "email",
+      "content": "It might be helpful to review the competitor analysis before next week's planning session."
+    },
+    "expected_classification": "information_only",
+    "expected_status": "none_found",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "relative deadline without message date",
+    "message": {
+      "item_id": "email-008",
+      "source": "email",
+      "content": "Please send the revised timeline by Friday."
+    },
+    "expected_classification": "action_required",
+    "expected_status": "commitments_found",
+    "expected_count": 1,
+    "expected_deadlines": [null],
+    "expected_deadline_phrases": ["Friday"],
+    "expect_ambiguity": true,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "relative deadline with message date",
+    "message": {
+      "item_id": "email-009",
+      "source": "email",
+      "created_at": "2026-08-19",
+      "content": "Please send the revised timeline by Friday."
+    },
+    "expected_classification": "action_required",
+    "expected_status": "commitments_found",
+    "expected_count": 1,
+    "expected_deadlines": ["2026-08-21"],
+    "expected_deadline_phrases": ["Friday"],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "decision required for contract renewal",
+    "message": {
+      "item_id": "email-010",
+      "source": "email",
+      "content": "Please decide whether we should renew the contract with Northstar before the vendor meeting on August 26, 2026."
+    },
+    "expected_classification": "decision_required",
+    "expected_status": "commitments_found",
+    "expected_count": 1,
+    "expected_deadlines": ["2026-08-26"],
+    "expected_deadline_phrases": ["August 26, 2026"],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "waiting on another person's response",
+    "message": {
+      "item_id": "email-011",
+      "source": "email",
+      "content": "We are waiting for Morgan to confirm the final pricing before we can proceed with the proposal."
+    },
+    "expected_classification": "waiting_on_someone",
+    "expected_status": "none_found",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "reference material without immediate action",
+    "message": {
+      "item_id": "email-012",
+      "source": "email",
+      "content": "Attached is the market research report for background before next month's strategy discussion."
+    },
+    "expected_classification": "reference_material",
+    "expected_status": "none_found",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "potential project rather than current task",
+    "message": {
+      "item_id": "email-013",
+      "source": "email",
+      "content": "We should consider creating a customer onboarding program for enterprise accounts this quarter."
+    },
+    "expected_classification": "potential_project",
+    "expected_status": "none_found",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "irrelevant promotional message",
+    "message": {
+      "item_id": "email-014",
+      "source": "email",
+      "content": "Congratulations! You have been selected for an exclusive limited-time vacation offer. Click now to claim your prize."
+    },
+    "expected_classification": "noise",
+    "expected_status": "none_found",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": false
+  },
+  {
+    "name": "named person request with a single recipient",
+    "message": {
+      "item_id": "email-015",
+      "source": "email",
+      "content": "Taylor, could you send the approved invoice to accounting by August 24, 2026?"
+    },
+    "expected_classification": "needs_clarification",
+    "expected_status": "needs_clarification",
+    "expected_count": 0,
+    "expected_deadlines": [],
+    "expected_deadline_phrases": [],
+    "expect_ambiguity": false,
+    "expect_clarification_question": true
+  }
+]
